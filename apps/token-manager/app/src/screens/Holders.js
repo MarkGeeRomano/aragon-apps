@@ -1,6 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
-import { TabBar, Table, TableHeader, TableRow, breakpoint } from '@aragon/ui'
+import { Spring, animated } from 'react-spring'
+import {
+  TabBar,
+  Table,
+  TableHeader,
+  TableRow,
+  breakpoint,
+  BreakPoint,
+  springs,
+} from '@aragon/ui'
 import HolderRow from '../components/HolderRow'
 import SideBar from '../components/SideBar'
 
@@ -8,6 +17,7 @@ const TABS = ['Holders', 'Token Info']
 
 class Holders extends React.Component {
   state = { selectedTab: 0 }
+
   static defaultProps = {
     holders: [],
   }
@@ -17,7 +27,9 @@ class Holders extends React.Component {
       holders,
       maxAccountTokens,
       onAssignTokens,
+      offset = 0,
       onRemoveTokens,
+      tabbedNavigation,
       tokenAddress,
       tokenDecimalsBase,
       tokenName,
@@ -38,8 +50,10 @@ class Holders extends React.Component {
               onSelect={this.handleSelectTab}
             />
           </ResponsiveTabBar>
-          <ResponsiveTable
-            selected={selectedTab === 0}
+          <Screen
+            component={ResponsiveTable}
+            selected={!tabbedNavigation || selectedTab === 0}
+            offset={-offset}
             header={
               <TableRow>
                 <StyledTableHeader
@@ -66,10 +80,12 @@ class Holders extends React.Component {
                 onRemoveTokens={onRemoveTokens}
               />
             ))}
-          </ResponsiveTable>
+          </Screen>
         </Main>
-        <ResponsiveSideBar
-          selected={selectedTab === 1}
+        <Screen
+          component={ResponsiveSideBar}
+          selected={!tabbedNavigation || selectedTab === 1}
+          offset={offset}
           groupMode={groupMode}
           holders={holders}
           tokenAddress={tokenAddress}
@@ -88,6 +104,42 @@ class Holders extends React.Component {
   }
 }
 
+const Screen = ({
+  offset,
+  children,
+  component: Component,
+  selected,
+  ...props
+}) => {
+  return (
+    <Spring
+      from={{ progress: 0 }}
+      to={{ progress: !!selected }}
+      config={springs.smooth}
+      native
+    >
+      {({ progress }) =>
+        selected && (
+          <AnimatedDiv
+            style={{
+              opacity: progress.interpolate(v => v),
+              transform: progress.interpolate(
+                v => `translate3d(${offset - v * offset}px, 0, 0)`
+              ),
+            }}
+          >
+            <Component {...props} children={children} />
+          </AnimatedDiv>
+        )
+      }
+    </Spring>
+  )
+}
+
+const AnimatedDiv = styled(animated.div)`
+  position: relative;
+`
+
 const StyledTableHeader = styled(TableHeader)`
   width: ${({ groupmode }) => (groupmode ? 100 : 50)}%;
 
@@ -95,7 +147,7 @@ const StyledTableHeader = styled(TableHeader)`
     'medium',
     `
       width: auto;
-    `,
+    `
   )};
 `
 
@@ -113,28 +165,26 @@ const ResponsiveTabBar = styled.div`
 `
 
 const ResponsiveTable = styled(Table)`
-  display: ${({ selected }) => (selected ? 'block' : 'none')};
   margin-top: 16px;
 
   ${breakpoint(
     'medium',
     `
-      display: table;
+      opacity: 1;
       margin-top: 0;
-    `,
+    `
   )};
 `
 
 const ResponsiveSideBar = styled(SideBar)`
-  display: ${({ selected }) => (selected ? 'block' : 'none')};
   margin-top: 16px;
 
   ${breakpoint(
     'medium',
     `
-      display: block;
+      opacity: 1;
       margin-top: 0;
-    `,
+    `
   )};
 `
 
@@ -145,7 +195,7 @@ const Main = styled.div`
     'medium',
     `
       width: 100%;
-    `,
+    `
   )};
 `
 const TwoPanels = styled.div`
@@ -156,8 +206,17 @@ const TwoPanels = styled.div`
     `
       min-width: 800px;
       display: flex;
-    `,
+    `
   )};
 `
 
-export default Holders
+export default props => (
+  <React.Fragment>
+    <BreakPoint to="medium">
+      <Holders {...props} tabbedNavigation offset={50} />
+    </BreakPoint>
+    <BreakPoint from="medium">
+      <Holders {...props} />
+    </BreakPoint>
+  </React.Fragment>
+)
