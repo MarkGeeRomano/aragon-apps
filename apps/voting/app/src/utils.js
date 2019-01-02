@@ -19,6 +19,6 @@ export function makeEtherscanBaseUrl(network) {
   }
 }
 
-export function isMobile() {
-  return window.orientation > -1
+export function isSmallScreen() {
+  return window.innerWidth < 768
 }
