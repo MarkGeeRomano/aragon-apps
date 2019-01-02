@@ -19,7 +19,7 @@ import Transfers from './components/Transfers'
 import MenuButton from './components/MenuButton/MenuButton'
 import { networkContextType } from './lib/provideNetwork'
 import { ETHER_TOKEN_FAKE_ADDRESS } from './lib/token-utils'
-import { makeEtherscanBaseUrl, isMobile } from './lib/utils'
+import { makeEtherscanBaseUrl, isSmallScreen } from './lib/utils'
 
 import addFundsIcon from './components/assets/add-funds-icon.svg'
 
@@ -112,7 +112,7 @@ class App extends React.Component {
               <AppBar
                 title={
                   <Title>
-                    {isMobile() && (
+                    {isSmallScreen() && (
                       <MenuButton onClick={this.handleMenuPanelOpen} />
                     )}
                     <TitleLabel>Finance</TitleLabel>
