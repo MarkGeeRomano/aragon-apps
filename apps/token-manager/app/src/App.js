@@ -19,7 +19,7 @@ import AssignVotePanelContent from './components/Panels/AssignVotePanelContent'
 import MenuButton from './components/MenuButton/MenuButton'
 import { networkContextType } from './provide-network'
 import { hasLoadedTokenSettings } from './token-settings'
-import { makeEtherscanBaseUrl, isMobile } from './utils'
+import { makeEtherscanBaseUrl, isSmallScreen } from './utils'
 import { addressesEqual } from './web3-utils'
 
 const initialAssignTokensConfig = {
@@ -126,7 +126,7 @@ class App extends React.Component {
               <AppBar
                 title={
                   <Title>
-                    {isMobile() && (
+                    {isSmallScreen() && (
                       <MenuButton onClick={this.handleMenuPanelOpen} />
                     )}
                     <TitleLabel>Token Manager</TitleLabel>
