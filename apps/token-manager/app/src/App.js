@@ -124,7 +124,7 @@ class App extends React.Component {
         <BaseStyles />
         <Main>
           <AppView
-            padding={isMobile() ? 0 : 30}
+            padding={isSmallScreen() ? 0 : 30}
             appBar={
               <AppBar
                 title={
@@ -137,7 +137,7 @@ class App extends React.Component {
                   </Title>
                 }
                 endContent={
-                  isMobile() ? (
+                  isSmallScreen() ? (
                     <AssignTokensButton
                       onClick={this.handleLaunchAssignTokensNoHolder}
                     />
@@ -172,33 +172,51 @@ class App extends React.Component {
               <EmptyState onActivate={this.handleLaunchAssignTokensNoHolder} />
             )}
           </AppView>
-          <SidePanel
-            title={
-              assignTokensConfig.mode === 'assign'
-                ? 'Assign tokens'
-                : 'Remove tokens'
-            }
-            opened={sidepanelOpened}
-            onClose={this.handleSidepanelClose}
-            onTransitionEnd={this.handleSidepanelTransitionEnd}
-          >
-            {appStateReady && (
-              <AssignVotePanelContent
-                opened={sidepanelOpened}
-                tokenDecimals={numData.tokenDecimals}
-                tokenDecimalsBase={tokenDecimalsBase}
-                onUpdateTokens={this.handleUpdateTokens}
-                getHolderBalance={this.getHolderBalance}
-                maxAccountTokens={maxAccountTokens}
-                {...assignTokensConfig}
-              />
-            )}
-          </SidePanel>
+          <ResponsiveSidePanel>
+            <SidePanel
+              title={
+                assignTokensConfig.mode === 'assign'
+                  ? 'Assign tokens'
+                  : 'Remove tokens'
+              }
+              opened={sidepanelOpened}
+              onClose={this.handleSidepanelClose}
+              onTransitionEnd={this.handleSidepanelTransitionEnd}
+            >
+              {appStateReady && (
+                <AssignVotePanelContent
+                  opened={sidepanelOpened}
+                  tokenDecimals={numData.tokenDecimals}
+                  tokenDecimalsBase={tokenDecimalsBase}
+                  onUpdateTokens={this.handleUpdateTokens}
+                  getHolderBalance={this.getHolderBalance}
+                  maxAccountTokens={maxAccountTokens}
+                  {...assignTokensConfig}
+                />
+              )}
+            </SidePanel>
+          </ResponsiveSidePanel>
         </Main>
       </PublicUrl.Provider>
     )
   }
 }
+
+const ResponsiveSidePanel = styled.div`
+  ${isSmallScreen() &&
+    `
+    & > div {
+      left: -90px;
+      right: 90px;
+    }
+
+    &&& aside {
+      position: relative;
+      width: 100%;
+      padding: 0;
+    }
+  `};
+`
 
 const Main = styled.div`
   height: 100vh;

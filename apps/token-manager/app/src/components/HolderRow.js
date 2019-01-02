@@ -12,7 +12,7 @@ import {
   IdentityBadge,
   breakpoint,
 } from '@aragon/ui'
-import { formatBalance, isMobile } from '../utils'
+import { formatBalance, isSmallScreen } from '../utils'
 
 class HolderRow extends React.Component {
   static defaultProps = {
@@ -47,7 +47,7 @@ class HolderRow extends React.Component {
       <TableRow>
         <StyledTableCell>
           <Owner>
-            <IdentityBadge entity={address} shorten={isMobile()} />
+            <IdentityBadge entity={address} shorten={isSmallScreen()} />
             {isCurrentUser && (
               <Badge.Identity
                 style={{ fontVariant: 'small-caps' }}
@@ -90,7 +90,7 @@ class HolderRow extends React.Component {
 }
 
 const StyledTableCell = styled(TableCell)`
-  ${isMobile() &&
+  ${isSmallScreen() &&
     `&&& {
       border-left: 0;
       border-right: 0;

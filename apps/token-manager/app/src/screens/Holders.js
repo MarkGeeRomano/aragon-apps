@@ -11,11 +11,11 @@ import {
 } from '@aragon/ui'
 import HolderRow from '../components/HolderRow'
 import SideBar from '../components/SideBar'
-import { isMobile } from '../utils'
+import { isSmallScreen } from '../utils'
 
 const TABS = ['Holders', 'Token Info']
 
-const OFFSET = isMobile() ? 50 : 0
+const OFFSET = isSmallScreen() ? 50 : 0
 
 class Holders extends React.Component {
   state = { selectedTab: 0 }
@@ -52,7 +52,7 @@ class Holders extends React.Component {
           </ResponsiveTabBar>
           <Screen
             component={ResponsiveTable}
-            selected={!isMobile() || selectedTab === 0}
+            selected={!isSmallScreen() || selectedTab === 0}
             offset={-OFFSET}
             header={
               <TableRow>
@@ -84,7 +84,7 @@ class Holders extends React.Component {
         </Main>
         <Screen
           component={ResponsiveSideBar}
-          selected={!isMobile() || selectedTab === 1}
+          selected={!isSmallScreen() || selectedTab === 1}
           offset={OFFSET}
           groupMode={groupMode}
           holders={holders}

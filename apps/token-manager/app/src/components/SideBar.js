@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Text, theme, IdentityBadge, breakpoint } from '@aragon/ui'
 import { formatBalance, stakesPercentages } from '../utils'
 import TokenBadge from './TokenBadge'
-import { isMobile } from '../utils'
+import { isSmallScreen } from '../utils'
 
 const DISTRIBUTION_ITEMS_MAX = 7
 const DISTRIBUTION_COLORS = [
@@ -106,7 +106,7 @@ class SideBar extends React.Component {
               <StakesListItem key={name}>
                 <span>
                   <StakesListBullet style={{ background: color }} />
-                  <IdentityBadge entity={name} shorten={isMobile()} />
+                  <IdentityBadge entity={name} shorten={isSmallScreen()} />
                 </span>
                 <strong>{stake}%</strong>
               </StakesListItem>
