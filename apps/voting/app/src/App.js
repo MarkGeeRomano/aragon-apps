@@ -261,44 +261,64 @@ class App extends React.Component {
               <EmptyState onActivate={this.handleCreateVoteOpen} />
             )}
           </AppView>
-          <SidePanel
-            title={`Vote #${currentVoteId} (${
-              currentVote && currentVote.data.open ? 'Open' : 'Closed'
-            })`}
-            opened={hasCurrentVote && !createVoteVisible && voteVisible}
-            onClose={this.handleVoteClose}
-            onTransitionEnd={this.handleVoteTransitionEnd}
-          >
-            {hasCurrentVote && (
-              <VotePanelContent
-                app={app}
-                vote={currentVote}
-                user={userAccount}
-                ready={voteSidebarOpened}
-                tokenContract={tokenContract}
-                tokenDecimals={tokenDecimals}
-                tokenSymbol={tokenSymbol}
-                onVote={this.handleVote}
-                onExecute={this.handleExecute}
-              />
-            )}
-          </SidePanel>
+          <ResponsiveSidePanel>
+            <SidePanel
+              title={`Vote #${currentVoteId} (${
+                currentVote && currentVote.data.open ? 'Open' : 'Closed'
+              })`}
+              opened={hasCurrentVote && !createVoteVisible && voteVisible}
+              onClose={this.handleVoteClose}
+              onTransitionEnd={this.handleVoteTransitionEnd}
+            >
+              {hasCurrentVote && (
+                <VotePanelContent
+                  app={app}
+                  vote={currentVote}
+                  user={userAccount}
+                  ready={voteSidebarOpened}
+                  tokenContract={tokenContract}
+                  tokenDecimals={tokenDecimals}
+                  tokenSymbol={tokenSymbol}
+                  onVote={this.handleVote}
+                  onExecute={this.handleExecute}
+                />
+              )}
+            </SidePanel>
+          </ResponsiveSidePanel>
 
-          <SidePanel
-            title="New Vote"
-            opened={createVoteVisible}
-            onClose={this.handleCreateVoteClose}
-          >
-            <NewVotePanelContent
+          <ResponsiveSidePanel>
+            <SidePanel
+              title="New Vote"
               opened={createVoteVisible}
-              onCreateVote={this.handleCreateVote}
-            />
-          </SidePanel>
+              onClose={this.handleCreateVoteClose}
+            >
+              <NewVotePanelContent
+                opened={createVoteVisible}
+                onCreateVote={this.handleCreateVote}
+              />
+            </SidePanel>
+          </ResponsiveSidePanel>
         </Main>
       </PublicUrl.Provider>
     )
   }
 }
+
+const ResponsiveSidePanel = styled.div`
+  ${isSmallScreen() &&
+    `
+     & > div {
+       left: -90px;
+       right: 90px;
+     }
+
+     &&& aside {
+       position: relative;
+       width: 100%;
+       padding: 0;
+     }
+   `};
+`
 
 const StyledAppBar = styled(AppBar)`
   padding-left: 0;
