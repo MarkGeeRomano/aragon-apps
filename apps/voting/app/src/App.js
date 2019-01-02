@@ -24,7 +24,7 @@ import { settingsContextType } from './utils/provideSettings'
 import { hasLoadedVoteSettings } from './vote-settings'
 import { VOTE_YEA } from './vote-types'
 import { EMPTY_CALLSCRIPT } from './evmscript-utils'
-import { makeEtherscanBaseUrl, isMobile } from './utils'
+import { makeEtherscanBaseUrl, isSmallScreen } from './utils'
 import { isVoteOpen, voteTypeFromContractEnum } from './vote-utils'
 import { shortenAddress, transformAddresses } from './web3-utils'
 
@@ -236,7 +236,7 @@ class App extends React.Component {
               <StyledAppBar
                 title={
                   <Title>
-                    {isMobile() && (
+                    {isSmallScreen() && (
                       <MenuButton onClick={this.handleMenuPanelOpen} />
                     )}
                     <TitleLabel>Voting</TitleLabel>
