@@ -12,6 +12,7 @@ import {
   SidePanel,
   observe,
   font,
+  theme,
 } from '@aragon/ui'
 import Balances from './components/Balances'
 import NewTransferPanelContent from './components/NewTransfer/PanelContent'
@@ -108,6 +109,7 @@ class App extends React.Component {
         <BaseStyles />
         <Main>
           <AppView
+            padding={isSmallScreen() ? 0 : 30}
             appBar={
               <AppBar
                 title={
@@ -119,7 +121,13 @@ class App extends React.Component {
                   </Title>
                 }
                 endContent={
-                  <Button mode="strong" onClick={this.handleNewTransferOpen}>
+                  <Button
+                    mode={isSmallScreen() ? 'text' : 'strong'}
+                    onClick={this.handleNewTransferOpen}
+                    style={{
+                      color: isSmallScreen() ? theme.accent : theme.White,
+                    }}
+                  >
                     New Transfer
                   </Button>
                 }
@@ -149,26 +157,44 @@ class App extends React.Component {
                 </EmptyScreen>
               )}
           </AppView>
-          <SidePanel
-            opened={newTransferOpened}
-            onClose={this.handleNewTransferClose}
-            title="New Transfer"
-          >
-            <NewTransferPanelContent
-              app={app}
+          <ResponsiveSidePanel>
+            <SidePanel
               opened={newTransferOpened}
-              tokens={tokens}
-              onWithdraw={this.handleWithdraw}
-              onDeposit={this.handleDeposit}
-              proxyAddress={proxyAddress}
-              userAccount={userAccount}
-            />
-          </SidePanel>
+              onClose={this.handleNewTransferClose}
+              title="New Transfer"
+            >
+              <NewTransferPanelContent
+                app={app}
+                opened={newTransferOpened}
+                tokens={tokens}
+                onWithdraw={this.handleWithdraw}
+                onDeposit={this.handleDeposit}
+                proxyAddress={proxyAddress}
+                userAccount={userAccount}
+              />
+            </SidePanel>
+          </ResponsiveSidePanel>
         </Main>
       </PublicUrl.Provider>
     )
   }
 }
+
+const ResponsiveSidePanel = styled.div`
+  ${isSmallScreen() &&
+    `
+      & > div {
+        left: -90px;
+        right: 90px;
+      }
+
+      &&& aside {
+        position: relative;
+        width: 100%;
+        padding: 0;
+      }
+    `};
+`
 
 const Title = styled.span`
   display: flex;
