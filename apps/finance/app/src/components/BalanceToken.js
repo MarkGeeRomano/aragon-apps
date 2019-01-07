@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { theme } from '@aragon/ui'
-import { formatTokenAmount } from '../lib/utils'
+import { theme, breakpoint } from '@aragon/ui'
+import { formatTokenAmount, isSmallScreen } from '../lib/utils'
 
 const splitAmount = amount => {
   const [integer, fractional] = formatTokenAmount(amount).split('.')
@@ -14,7 +14,7 @@ const splitAmount = amount => {
 }
 
 const BalanceToken = ({ amount, symbol, verified, convertedAmount = -1 }) => (
-  <Main>
+  <React.Fragment>
     <Token>
       {verified &&
         symbol && (
@@ -27,23 +27,34 @@ const BalanceToken = ({ amount, symbol, verified, convertedAmount = -1 }) => (
         )}
       {symbol || ' '}
     </Token>
-    <Amount>{splitAmount(amount.toFixed(3))}</Amount>
-    <ConvertedAmount>
-      {convertedAmount >= 0
-        ? `$${formatTokenAmount(convertedAmount.toFixed(2))}`
-        : '−'}
-    </ConvertedAmount>
-  </Main>
+    <Wrap>
+      <Amount>{splitAmount(amount.toFixed(3))}</Amount>
+      <ConvertedAmount>
+        {convertedAmount >= 0
+          ? `$${formatTokenAmount(convertedAmount.toFixed(2))}`
+          : '−'}
+      </ConvertedAmount>
+    </Wrap>
+  </React.Fragment>
 )
 
-const Main = styled.div``
+const Wrap = styled.div`
+  text-align: right;
+
+  ${breakpoint(
+    'medium',
+    `
+      text-align: left;
+    `
+  )};
+`
 
 const Token = styled.div`
   display: flex;
   align-items: center;
   font-variant: small-caps;
   text-transform: lowercase;
-  font-size: 18px;
+  font-size: ${isSmallScreen() ? 28 : 18}px;
   color: ${theme.textSecondary};
   img {
     margin-right: 10px;
