@@ -12,11 +12,13 @@ import {
   SidePanel,
   font,
   observe,
+  breakpoint,
 } from '@aragon/ui'
 import EmptyState from './screens/EmptyState'
 import Holders from './screens/Holders'
 import AssignVotePanelContent from './components/Panels/AssignVotePanelContent'
 import MenuButton from './components/MenuButton/MenuButton'
+import AssignTokensButton from './components/AssignTokensButton/AssignTokensButton'
 import { networkContextType } from './provide-network'
 import { hasLoadedTokenSettings } from './token-settings'
 import { makeEtherscanBaseUrl, isSmallScreen } from './utils'
@@ -122,6 +124,7 @@ class App extends React.Component {
         <BaseStyles />
         <Main>
           <AppView
+            padding={isSmallScreen() ? 0 : 30}
             appBar={
               <AppBar
                 title={
@@ -134,12 +137,18 @@ class App extends React.Component {
                   </Title>
                 }
                 endContent={
-                  <Button
-                    mode="strong"
-                    onClick={this.handleLaunchAssignTokensNoHolder}
-                  >
-                    Assign Tokens
-                  </Button>
+                  isSmallScreen() ? (
+                    <AssignTokensButton
+                      onClick={this.handleLaunchAssignTokensNoHolder}
+                    />
+                  ) : (
+                    <Button
+                      mode="strong"
+                      onClick={this.handleLaunchAssignTokensNoHolder}
+                    >
+                      Assign Tokens
+                    </Button>
+                  )
                 }
               />
             }
@@ -163,36 +172,62 @@ class App extends React.Component {
               <EmptyState onActivate={this.handleLaunchAssignTokensNoHolder} />
             )}
           </AppView>
-          <SidePanel
-            title={
-              assignTokensConfig.mode === 'assign'
-                ? 'Assign tokens'
-                : 'Remove tokens'
-            }
-            opened={sidepanelOpened}
-            onClose={this.handleSidepanelClose}
-            onTransitionEnd={this.handleSidepanelTransitionEnd}
-          >
-            {appStateReady && (
-              <AssignVotePanelContent
-                opened={sidepanelOpened}
-                tokenDecimals={numData.tokenDecimals}
-                tokenDecimalsBase={tokenDecimalsBase}
-                onUpdateTokens={this.handleUpdateTokens}
-                getHolderBalance={this.getHolderBalance}
-                maxAccountTokens={maxAccountTokens}
-                {...assignTokensConfig}
-              />
-            )}
-          </SidePanel>
+          <ResponsiveSidePanel>
+            <SidePanel
+              title={
+                assignTokensConfig.mode === 'assign'
+                  ? 'Assign tokens'
+                  : 'Remove tokens'
+              }
+              opened={sidepanelOpened}
+              onClose={this.handleSidepanelClose}
+              onTransitionEnd={this.handleSidepanelTransitionEnd}
+            >
+              {appStateReady && (
+                <AssignVotePanelContent
+                  opened={sidepanelOpened}
+                  tokenDecimals={numData.tokenDecimals}
+                  tokenDecimalsBase={tokenDecimalsBase}
+                  onUpdateTokens={this.handleUpdateTokens}
+                  getHolderBalance={this.getHolderBalance}
+                  maxAccountTokens={maxAccountTokens}
+                  {...assignTokensConfig}
+                />
+              )}
+            </SidePanel>
+          </ResponsiveSidePanel>
         </Main>
       </PublicUrl.Provider>
     )
   }
 }
 
+const ResponsiveSidePanel = styled.div`
+  ${isSmallScreen() &&
+    `
+    & > div {
+      left: -90px;
+      right: 90px;
+    }
+
+    &&& aside {
+      position: relative;
+      width: 100%;
+      padding: 0;
+    }
+  `};
+`
+
 const Main = styled.div`
   height: 100vh;
+  width: 100vw;
+
+  ${breakpoint(
+    'medium',
+    `
+      width: auto;
+    `,
+  )};
 `
 
 const Title = styled.span`

@@ -1,10 +1,25 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Table, TableHeader, TableRow } from '@aragon/ui'
+import { Spring, animated } from 'react-spring'
+import {
+  TabBar,
+  Table,
+  TableHeader,
+  TableRow,
+  breakpoint,
+  springs,
+} from '@aragon/ui'
 import HolderRow from '../components/HolderRow'
 import SideBar from '../components/SideBar'
+import { isSmallScreen } from '../utils'
+
+const TABS = ['Holders', 'Token Info']
+
+const OFFSET = isSmallScreen() ? 50 : 0
 
 class Holders extends React.Component {
+  state = { selectedTab: 0 }
+
   static defaultProps = {
     holders: [],
   }
@@ -23,15 +38,31 @@ class Holders extends React.Component {
       tokenTransfersEnabled,
       userAccount,
     } = this.props
+    const { selectedTab } = this.state
 
     return (
       <TwoPanels>
         <Main>
-          <Table
+          <ResponsiveTabBar>
+            <TabBar
+              items={TABS}
+              selected={selectedTab}
+              onSelect={this.handleSelectTab}
+            />
+          </ResponsiveTabBar>
+          <Screen
+            component={ResponsiveTable}
+            selected={!isSmallScreen() || selectedTab === 0}
+            offset={-OFFSET}
             header={
               <TableRow>
-                <TableHeader title={groupMode ? 'Owner' : 'Holder'} />
-                {!groupMode && <TableHeader title="Balance" align="right" />}
+                <StyledTableHeader
+                  title={groupMode ? 'Owner' : 'Holder'}
+                  groupmode={groupMode}
+                />
+                {!groupMode && (
+                  <StyledTableHeader title="Balance" align="right" />
+                )}
                 <TableHeader title="" />
               </TableRow>
             }
@@ -49,9 +80,12 @@ class Holders extends React.Component {
                 onRemoveTokens={onRemoveTokens}
               />
             ))}
-          </Table>
+          </Screen>
         </Main>
-        <SideBar
+        <Screen
+          component={ResponsiveSideBar}
+          selected={!isSmallScreen() || selectedTab === 1}
+          offset={OFFSET}
           groupMode={groupMode}
           holders={holders}
           tokenAddress={tokenAddress}
@@ -64,15 +98,115 @@ class Holders extends React.Component {
       </TwoPanels>
     )
   }
+
+  handleSelectTab = index => {
+    this.setState({ selectedTab: index })
+  }
 }
 
+const Screen = ({
+  offset,
+  children,
+  component: Component,
+  selected,
+  ...props
+}) => {
+  return (
+    <Spring
+      from={{ progress: 0 }}
+      to={{ progress: !!selected }}
+      config={springs.smooth}
+      native
+    >
+      {({ progress }) =>
+        selected && (
+          <AnimatedDiv
+            style={{
+              opacity: progress.interpolate(v => v),
+              transform: progress.interpolate(
+                v => `translate3d(${offset - v * offset}px, 0, 0)`,
+              ),
+            }}
+          >
+            <Component {...props} children={children} />
+          </AnimatedDiv>
+        )
+      }
+    </Spring>
+  )
+}
+
+const AnimatedDiv = styled(animated.div)`
+  position: relative;
+`
+
+const StyledTableHeader = styled(TableHeader)`
+  width: ${({ groupmode }) => (groupmode ? 100 : 50)}%;
+
+  ${breakpoint(
+    'medium',
+    `
+      width: auto;
+    `,
+  )};
+`
+
+const ResponsiveTabBar = styled.div`
+  ${breakpoint('medium', `display: none`)};
+  margin-top: 1em;
+
+  & ul {
+    border-bottom: none !important;
+  }
+  & li {
+    padding: 0 20px;
+  }
+`
+
+const ResponsiveTable = styled(Table)`
+  margin-top: 1em;
+
+  ${breakpoint(
+    'medium',
+    `
+      opacity: 1;
+      margin-top: 0;
+    `,
+  )};
+`
+
+const ResponsiveSideBar = styled(SideBar)`
+  margin-top: 1em;
+
+  ${breakpoint(
+    'medium',
+    `
+      opacity: 1;
+      margin-top: 0;
+    `,
+  )};
+`
+
 const Main = styled.div`
-  width: 100%;
+  max-width: 100%;
+
+  ${breakpoint(
+    'medium',
+    `
+      width: 100%;
+    `,
+  )};
 `
 const TwoPanels = styled.div`
-  display: flex;
   width: 100%;
-  min-width: 800px;
+
+  ${breakpoint(
+    'medium',
+    `
+      min-width: 800px;
+      display: flex;
+    `,
+  )};
 `
 
 export default Holders
