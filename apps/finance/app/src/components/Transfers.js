@@ -8,9 +8,11 @@ import {
   TableRow,
   DropDown,
   theme,
+  breakpoint,
 } from '@aragon/ui'
 import * as TransferTypes from '../transfer-types'
 import { addressesEqual, toChecksumAddress } from '../lib/web3-utils'
+import { isSmallScreen } from '../lib/utils'
 import TransferRow from './TransferRow'
 import GetWindowSize from './GetWindowSize'
 
@@ -140,13 +142,15 @@ class Transfers extends React.Component {
               {({ width }) => (
                 <FixedTable
                   header={
-                    <TableRow>
-                      <DateHeader title="Date" />
-                      <SourceRecipientHeader title="Source / Recipient" />
-                      <ReferenceHeader title="Reference" />
-                      <AmountHeader title="Amount" align="right" />
-                      <TableHeader />
-                    </TableRow>
+                    !isSmallScreen() && (
+                      <TableRow>
+                        <DateHeader title="Date" />
+                        <SourceRecipientHeader title="Source / Recipient" />
+                        <ReferenceHeader title="Reference" />
+                        <AmountHeader title="Amount" align="right" />
+                        <TableHeader />
+                      </TableRow>
+                    )
                   }
                 >
                   {filteredTransfers
@@ -188,8 +192,15 @@ const Header = styled.div`
 `
 
 const Filters = styled.div`
-  display: flex;
-  flex-wrap: nowrap;
+  display: none;
+
+  ${breakpoint(
+    'medium',
+    `
+      display: flex;
+      flex-wrap: nowrap;
+    `
+  )};
 `
 
 const FilterLabel = styled.label`
@@ -200,9 +211,16 @@ const FilterLabel = styled.label`
 `
 
 const Title = styled.h1`
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin: 20px 0 20px 30px;
   font-weight: 600;
+
+  ${breakpoint(
+    'medium',
+    `
+      margin-top: 10px;
+      margin-left: 0;
+    `
+  )};
 `
 
 const Label = styled.span`
