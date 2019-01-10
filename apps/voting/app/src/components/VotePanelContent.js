@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Blockies from 'react-blockies'
 import {
   Button,
+  IdentityBadge,
   Info,
   SafeLink,
   SidePanelSplit,
@@ -15,7 +16,7 @@ import {
 import provideNetwork from '../utils/provideNetwork'
 import { VOTE_NAY, VOTE_YEA } from '../vote-types'
 import { round } from '../math-utils'
-import { pluralize } from '../utils'
+import { pluralize, isSmallScreen } from '../utils'
 import { getQuorumProgress } from '../vote-utils'
 import VoteSummary from './VoteSummary'
 import VoteStatus from './VoteStatus'
@@ -51,7 +52,7 @@ class VotePanelContent extends React.Component {
       this.loadUserBalance(
         nextProps.user,
         nextProps.vote,
-        nextProps.tokenContract
+        nextProps.tokenContract,
       )
       this.loadUserCanVote(nextProps.user, nextProps.vote)
     }
@@ -80,7 +81,7 @@ class VotePanelContent extends React.Component {
         .first()
         .subscribe(balance => {
           const adjustedBalance = Math.floor(
-            parseInt(balance, 10) / Math.pow(10, tokenDecimals)
+            parseInt(balance, 10) / Math.pow(10, tokenDecimals),
           )
           this.setState({ userBalance: adjustedBalance })
         })
@@ -220,23 +221,7 @@ class VotePanelContent extends React.Component {
             <Label>Created By</Label>
           </h2>
           <Creator>
-            <CreatorImg>
-              <Blockies seed={creator} size={8} />
-            </CreatorImg>
-            <div>
-              <p>
-                {etherscanBaseUrl ? (
-                  <SafeLink
-                    href={`${etherscanBaseUrl}/address/${creator}`}
-                    target="_blank"
-                  >
-                    {creator}
-                  </SafeLink>
-                ) : (
-                  creator
-                )}
-              </p>
-            </div>
+            <IdentityBadge entity={creator} shorten={isSmallScreen()} />
           </Creator>
         </Part>
         <SidePanelSeparator />
