@@ -185,20 +185,29 @@ class Transfers extends React.Component {
 }
 
 const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;
   margin-bottom: 10px;
-`
-
-const Filters = styled.div`
-  display: none;
 
   ${breakpoint(
     'medium',
     `
       display: flex;
+      justify-content: space-between;
       flex-wrap: nowrap;
+  `
+  )};
+`
+
+const Filters = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  margin-left: 10px;
+  margin-bottom: 20px;
+
+  ${breakpoint(
+    'medium',
+    `
+      margin-left: 0;
+      margin-bottom: 0;
     `
   )};
 `
@@ -251,9 +260,12 @@ const FixedTable = styled(Table)`
   color: rgba(0, 0, 0, 0.75);
   margin-bottom: 20px;
 
-  ${breakpoint('medium', `
+  ${breakpoint(
+    'medium',
+    `
     margin-bottom: 0;
-  `)}
+  `
+  )};
 `
 
 const DateHeader = styled(TableHeader)`
